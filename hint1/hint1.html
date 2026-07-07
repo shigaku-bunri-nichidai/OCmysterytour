@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>case2 首飾り事件の首謀者のヒント</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ece0c2;
+    --paper-edge: #ddc99c;
+    --ink: #3a2a17;
+    --purple: #1c2b52;
+    --purple-deep: #101a34;
+    --gold: #a8823f;
+    --seal: #8b3a22;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Shippori Mincho', serif;
+    background:
+      radial-gradient(ellipse at top left, rgba(255,255,255,0.45), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(0,0,0,0.06), transparent 55%),
+      var(--paper);
+    color: var(--ink);
+    max-width: 640px;
+    margin: 40px auto 80px;
+    padding: 0 20px;
+    line-height: 1.9;
+  }
+
+  .case-header {
+    background: linear-gradient(160deg, var(--purple), var(--purple-deep));
+    border: 2px solid var(--gold);
+    border-radius: 4px;
+    padding: 22px 24px;
+    margin-bottom: 36px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+  .case-label {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.25em;
+    font-size: 0.6em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .case-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #f7f0dd;
+    margin-top: 8px;
+  }
+
+  .item { margin-bottom: 14px; }
+
+  .q-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1em;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--paper-edge);
+    border: 1px solid var(--gold);
+    border-left: 6px solid var(--seal);
+    border-radius: 4px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .q-button:hover {
+    transform: translateX(3px);
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .seal {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: url('seal.png') center / 115% no-repeat;
+    box-shadow:
+      0 3px 4px rgba(0,0,0,0.35),
+      inset 0 -2px 3px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f6e6c8;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.85em;
+  }
+  .seal.answer {
+    position: relative;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f5dfa0, var(--gold) 55%, #83621f 100%);
+    box-shadow:
+      inset 0 -3px 4px rgba(0,0,0,0.3),
+      inset 0 2px 3px rgba(255,255,255,0.55),
+      0 2px 3px rgba(0,0,0,0.25);
+    color: var(--purple-deep);
+  }
+  .seal.answer::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: repeating-conic-gradient(from 0deg, #c9a24b 0deg 8deg, #7a5f22 8deg 16deg);
+    z-index: -1;
+  }
+
+  .hint {
+    display: none;
+    position: relative;
+    font-size: 1.1em;
+    padding: 18px 20px;
+    margin-top: 8px;
+    background: var(--paper);
+    border: 1px dashed var(--gold);
+    border-radius: 4px;
+  }
+  .hint.show {
+    display: block;
+    animation: unfurl .35s ease;
+  }
+  .hint.answer.show::after {
+    content: "解明！";
+    position: absolute;
+    top: -12px;
+    right: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7em;
+    letter-spacing: 0.1em;
+    color: var(--seal);
+    border: 2px solid var(--seal);
+    padding: 2px 8px;
+    border-radius: 3px;
+    transform: rotate(-8deg);
+    background: rgba(255,255,255,0.9);
+  }
+  @keyframes unfurl {
+    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .hint img {
+    display: block;
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+    margin: 12px auto 0;
+    border-radius: 4px;
+    border: 3px solid var(--gold);
+  }
+</style>
+</head>
+<body>
+
+  <div class="case-header">
+    <div class="case-label">🔍 Case File — マリー・アントワネットの真実</div>
+    <div class="case-title">case2 首飾り事件の首謀者のヒント</div>
+  </div>
+
+  <div class="item">
+    <button class="q-button" onclick="toggle(this)"><span class="seal">?</span>ヒント➀</button>
+    <div class="hint"><p>三人の証言のうち、一人が嘘をついている<br>一見すると、アントワネットVSロアン、ラモット夫人の構造に見えるのだが・・・？</p></div>
+  </div>
+
+  <div class="item">
+    <button class="q-button" onclick="toggle(this)"><span class="seal">?</span>ヒント②</button>
+    <div class="hint"><p>契約書にも注目してみよう<br>右下にサインがあるが、今までサインに見覚えはないだろうか</p></div>
+  </div>
+
+  <div class="item">
+    <button class="q-button" onclick="toggle(this)"><span class="seal">?</span>ヒント③</button>
+    <div class="hint"><p>手元のワークシートの見開き右下をみてみよう<br><img src="sign.jpg" alt="サイン"></p></div>
+  </div>
+
+  <div class="item">
+    <button class="q-button" onclick="toggle(this)"><span class="seal answer">✓</span>答え</button>
+    <div class="hint answer"><p><strong>首謀者はラ・モット夫人。</strong><br>三人の証言を確かめると、<br>アントワネットが首飾りの売買に関与しているか否かで食い違いがある。
+	<br>契約書とワークシートのサインを<br>見比べると、サインの表記(偽物はde Franceと書いてある)や字体も異なっている。
+	<br>つまり契約書のサインは<br>偽物であり、ラ・モットが仲介と称してロアンを騙し、ロアンは本物と信じて、アントワネットの偽のサインを預かっていたのだ。</p></div>
+  </div>
+
+  <script>
+    function toggle(btn) {
+      const ans = btn.nextElementSibling;
+      ans.classList.toggle('show');
+    }
+  </script>
+
+</body>
+</html>
