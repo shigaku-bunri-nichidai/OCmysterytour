@@ -221,11 +221,16 @@
     <div class="hint answer"><p>26(%)<br><img src="military-answer.jpg" alt="軍事王室解答"></p></div>
   </div>
 
-  <script>
+ <script>
     function toggle(btn) {
       const ans = btn.nextElementSibling;
       ans.classList.toggle('show');
-    }
+		if (typeof gtag === 'function') {
+    gtag('event', 'toggle_hint', { 
+		'label': btn.textContent.trim()
+	});
+  }
+}
   </script>
 
 </body>
