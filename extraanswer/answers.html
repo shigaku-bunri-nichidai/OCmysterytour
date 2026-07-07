@@ -199,7 +199,12 @@
     function toggle(btn) {
       const ans = btn.nextElementSibling;
       ans.classList.toggle('show');
-    }
+		if (typeof gtag === 'function') {
+    gtag('event', 'toggle_hint', { 
+		'label': btn.textContent.trim()
+	});
+  }
+}
   </script>
 
 </body>
