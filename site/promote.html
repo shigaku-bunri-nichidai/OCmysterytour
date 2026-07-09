@@ -500,7 +500,7 @@
       canvas.classList.add('burst');                               // ザザー：ノイズ／グリッチ開始
     }, 1650);
 
-    setTimeout(()=>{ f1.classList.add('gone'); }, 1700);           // image1 completely hidden
+    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 1700);           // image1 completely hidden
 
     setTimeout(()=>{
       blackout.classList.add('seq');                                // 画面が黒くなる
