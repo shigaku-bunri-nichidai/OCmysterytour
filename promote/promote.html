@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E2F2MQGRBT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-E2F2MQGRBT');
+</script>
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:title" content="史学科×謎解き｜史学科捜査ツアー">
+<meta property="og:description" content="日本大学文理学部史学科　特別企画「史学科捜査ツアー」">
+<meta property="og:image" content="https://shigaku-bunri-nichidai.github.io/OCmysterytour/promote/title.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>史学科×謎解き｜secret tour</title>
@@ -291,10 +302,10 @@
     box-shadow:0 6px 14px rgba(0,0,0,0.5);
   }
 
-  /* FIX: アップロードされた実際のスタンプ画像を使用する形に変更 */
+  /* FIX: width の値が抜けていたのを72pxに復元（元は width:px; という無効指定でした） */
   .file .stamp{
     position:absolute; top:22px; right:34px;
-    width:px; height:72px;
+    width:72px; height:72px;
   }
   .file .stamp img{
     width:150%; height:150%;
