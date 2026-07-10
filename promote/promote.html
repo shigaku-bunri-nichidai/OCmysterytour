@@ -145,17 +145,31 @@
   .tape-edge.top{ top:0; }
   .tape-edge.bottom{ bottom:0; }
 
-  /* scroll cue */
+/* scroll cue */
   .scrollcue{
     position:absolute; left:50%; bottom:38px; transform:translateX(-50%);
     z-index:20; opacity:0;
-    display:flex; flex-direction:column; align-items:center; gap:8px;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
     color:var(--parchment-dim);
     font-family:"Special Elite",monospace;
-    font-size:11px; letter-spacing:0.35em;
+    font-size:12px; letter-spacing:0.2em;
     transition:opacity 1s ease 0.4s;
+    text-align: center;
   }
   .scrollcue.show{ opacity:0.85; }
+  
+  /* 矢印（∨）が上下に不穏に揺れるアニメーション */
+  .scrollcue .arrow {
+    font-family:"Noto Sans JP", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--tape); /* 目立たせるためにKEEP OUTの黄色にしていますが、白っぽくしたければ var(--parchment-dim) に変更してください */
+    animation: bounce 1.5s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
   .scrollcue .bar{
     width:1px; height:34px; background:var(--parchment-dim);
     position:relative; overflow:hidden;
@@ -376,9 +390,9 @@
 
   <div class="tape-edge bottom"></div>
 
-  <div class="scrollcue" id="scrollcue">
+ <div class="scrollcue" id="scrollcue">
     <span>SCROLL</span>
-    <div class="bar"></div>
+    <div class="arrow">∨</div>
   </div>
 </section>
 
