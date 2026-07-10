@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>??科×謎解き｜secret tour</title>
+<title>史学科×謎解き｜secret tour</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Special+Elite&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -71,6 +71,17 @@
     height:auto; width:min(640px, 95vw);
     object-fit:contain;
     filter: drop-shadow(0 0 22px rgba(0,0,0,0.85));
+  }
+
+  /* FIX(1): タイトル表示時、背後に残っているsite2.png(モノクロ)へ
+     ゆっくりズームをかけて、単調なグレーに見えないよう質感と
+     わずかな動きを持たせる */
+  #f2 img{
+    transition: transform 4.5s ease-out;
+    transform: scale(1);
+  }
+  #f2.reveal-zoom img{
+    transform: scale(1.1);
   }
 
   /* static / glitch canvas — fixed to the real browser viewport so it
@@ -146,43 +157,42 @@
   .tape-edge.bottom{ bottom:0; }
 
 /* scroll cue */
+  /* FIX: pop.png のような単調なグレー背景の上でも埋もれないよう、
+     背景チップ(半透明+ぼかし)を敷いて、どの画像の上でも視認性を確保。
+     文字も大きく・太く・発光させて「操作できる」感を強めた */
   .scrollcue{
-    position:absolute; left:50%; bottom:15vh; transform:translateX(-50%);
+    position:absolute; left:50%; bottom:max(6vh, calc(env(safe-area-inset-bottom) + 28px));
+    transform:translateX(-50%);
     z-index:20; opacity:0;
-    display:flex; flex-direction:column; align-items:center; gap:2px;
-    color:var(--parchment-dim);
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    padding:12px 22px 16px;
+    background:rgba(10,9,8,0.5);
+    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:blur(3px);
+    border:1px solid rgba(227,194,60,0.4);
+    border-radius:999px;
+    color:var(--parchment);
     font-family:"Special Elite",monospace;
-    font-size:12px; letter-spacing:0.2em;
-    transition:opacity 1s ease 0.4s;
+    font-size:13px; font-weight:700; letter-spacing:0.28em;
+    text-shadow:0 1px 6px rgba(0,0,0,0.9);
+    transition:opacity 0.8s ease 0.2s;
     text-align: center;
+    pointer-events:none;
   }
-  .scrollcue.show{ opacity:0.85; }
-  
+  .scrollcue.show{ opacity:1; }
+
   /* 矢印（∨）が上下に不穏に揺れるアニメーション */
   .scrollcue .arrow {
     font-family:"Noto Sans JP", sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    color: var(--tape); /* 目立たせるためにKEEP OUTの黄色にしていますが、白っぽくしたければ var(--parchment-dim) に変更してください */
-    animation: bounce 1.5s ease-in-out infinite;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--tape);
+    text-shadow:0 0 10px rgba(227,194,60,0.75), 0 2px 5px rgba(0,0,0,0.9);
+    animation: bounce 1.4s ease-in-out infinite;
   }
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(6px); }
-  }
-  .scrollcue .bar{
-    width:1px; height:34px; background:var(--parchment-dim);
-    position:relative; overflow:hidden;
-  }
-  .scrollcue .bar::after{
-    content:""; position:absolute; left:0; top:-100%; width:100%; height:100%;
-    background:var(--tape);
-    animation:drip 1.8s ease-in-out infinite;
-  }
-  @keyframes drip{
-    0%{ top:-100%; }
-    60%{ top:100%; }
-    100%{ top:100%; }
+    50% { transform: translateY(7px); }
   }
 
   /* ---------- CASE FILE SECTION ---------- */
@@ -196,7 +206,23 @@
     position:absolute; inset:0 0 auto 0; height:80px;
     background:linear-gradient(to bottom, var(--void), transparent);
     pointer-events:none;
+    z-index:1;
   }
+  /* FIX(2): 本文セクションにもヒーロー画像(site.png)をごく薄い
+     透かしとして敷き、冒頭で見せた「アントワネットの絵」を
+     本文でも回収する。文字の可読性のため極薄・グレースケール */
+  .case::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image:url("site.png");
+    background-size:cover;
+    background-position:center 12%;
+    filter:grayscale(1) contrast(1.05);
+    opacity:0.06;
+    pointer-events:none;
+    z-index:0;
+  }
+  .case > *{ position:relative; z-index:1; }
   .eyebrow{
     font-family:"Special Elite",monospace;
     color:var(--tape);
@@ -226,10 +252,14 @@
   }
   .case .lede b{ color:var(--parchment); font-weight:700; }
 
+  /* --- FIX: グリッドの行間隔をカードの上に飛び出すラベル分だけ広めに確保。
+     以前は .files が1枚目の直後で閉じてしまい、2枚目がグリッド外に
+     はみ出して隣接していたのが「距離感が近い」根本原因でした。 --- */
   .files{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
-    gap:28px;
+    gap:28px 28px;
+    row-gap:56px;
     max-width:980px;
   }
   .file{
@@ -239,9 +269,16 @@
     padding:34px 30px 30px;
     box-shadow:0 20px 50px -18px rgba(0,0,0,0.7);
     transform:rotate(var(--rot,0deg));
+    transition: transform .15s ease, box-shadow .15s ease;
   }
   .file:nth-child(1){ --rot:-0.6deg; }
   .file:nth-child(2){ --rot:0.5deg; }
+  /* FIX(4): タップ/ホバーで少し沈む反応をつけ、「手に取れる資料」感を出す */
+  .file:hover,
+  .file:active{
+    transform: rotate(var(--rot,0deg)) scale(0.985) translateY(2px);
+    box-shadow:0 10px 26px -14px rgba(0,0,0,0.8);
+  }
   .file::before{
     content:attr(data-no);
     position:absolute; top:-14px; left:26px;
@@ -252,35 +289,54 @@
     padding:5px 12px;
     box-shadow:0 6px 14px rgba(0,0,0,0.5);
   }
+
+  /* --- FIX: スタンプの見た目。
+     以前はノイズ画像でマスクして文字ごと削っていたため「シミのように
+     ぼやけたスタンプ」になっていた。文字は削らず、うっすらノイズを
+     multiplyで重ねるだけにして、実際のハンコらしい二重丸＋掠れ感に変更 --- */
   .file .stamp{
     position:absolute; top:22px; right:22px;
-    width:64px; height:64px;
-    border:2px solid var(--blood);
+    width:66px; height:66px;
     border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     color:var(--blood);
     font-family:"Special Elite",monospace;
-    font-size:9px; letter-spacing:0.05em;
-    text-align:center; line-height:1.3;
+    font-weight:700;
+    font-size:9.5px; letter-spacing:0.04em;
+    text-align:center; line-height:1.35;
     transform:rotate(-14deg);
-    opacity: 0.8; /* 少し透けさせる */
-    filter: blur(0.3px); /* ほんの少しぼかしてインクのにじみを表現 */
-    mask-image: radial-gradient(#000 30%, transparent 100%), 
-                url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -1 1'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    mask-size: 100% 100%, 80px 80px; /* ノイズの細かさを調整 */
-    mask-composite: source-in, subtract; /* ノイズの部分を切り抜く */
-    -webkit-mask-image: radial-gradient(#000 30%, transparent 100%), 
-                        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -1 1'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    -webkit-mask-size: 100% 100%, 80px 80px;
-    -webkit-mask-composite: source-in, subtract;
-    opacity:0.85;
   }
+  .file .stamp::before{
+    content:"";
+    position:absolute; inset:0;
+    border:2.5px solid var(--blood);
+    border-radius:50%;
+  }
+  .file .stamp::after{
+    content:"";
+    position:absolute; inset:5px;
+    border:1px solid var(--blood);
+    border-radius:50%;
+    opacity:0.7;
+  }
+  .file .stamp .stamp-label{
+    position:relative; z-index:1;
+  }
+  .file .stamp .grunge{
+    position:absolute; inset:-2px;
+    border-radius:50%;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode:multiply;
+    opacity:0.35;
+    pointer-events:none;
+  }
+
   .file h3{
     font-family:"Shippori Mincho",serif;
     font-weight:700;
     font-size:19px;
     line-height:1.55;
-    max-width:80%;
+    max-width:76%;
     margin-bottom:16px;
   }
   .file .room{
@@ -334,6 +390,17 @@
   .rally{
     max-width:640px;
   }
+  .rally .eyebrow-mini{
+    font-family:"Special Elite",monospace;
+    color:var(--tape);
+    font-size:11px;
+    letter-spacing:0.35em;
+    display:inline-flex; align-items:center; gap:8px;
+    margin-bottom:10px;
+  }
+  .rally .eyebrow-mini::before{
+    content:""; width:18px; height:1px; background:var(--tape);
+  }
   .rally h4{
     font-family:"Shippori Mincho",serif;
     font-size:22px;
@@ -357,14 +424,24 @@
     font-family:"Special Elite",monospace;
   }
   .rally .prize{
-    margin-top:22px;
-    display:inline-block;
+    margin-top:24px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:var(--tape);
     border:1px solid var(--tape);
-    color:var(--tape);
+    color:#1b1712;
     font-family:"Special Elite",monospace;
+    font-weight:700;
+    font-size:14.5px;
+    letter-spacing:0.06em;
+    padding:14px 24px;
+    box-shadow:0 12px 26px -12px rgba(227,194,60,0.55);
+  }
+  .rally .prize::before{
+    content:"★";
     font-size:13px;
-    letter-spacing:0.1em;
-    padding:12px 20px;
+    color:#1b1712;
   }
 
   footer{
@@ -375,6 +452,14 @@
     font-family:"Special Elite",monospace;
     background:var(--void-2);
     border-top:1px solid var(--line);
+  }
+
+  /* --- モバイルでの微調整。カード間隔をさらに確保し、スタンプが
+     見出しと衝突しないよう見出し幅を調整 --- */
+  @media (max-width: 520px){
+    .files{ row-gap:64px; }
+    .file h3{ max-width:66%; font-size:17.5px; }
+    .file .stamp{ width:58px; height:58px; font-size:8.5px; top:18px; right:18px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -415,19 +500,25 @@
     史学科の企画に足を運び、手がかりを集めよう。
   </p>
 
+  <!-- FIX: FILE-01, FILE-02 とも同じ .files グリッド内に収める -->
   <div class="files">
     <article class="file" data-no="FILE — 01">
-      <div class="stamp">SPECIAL<br>企画</div>
+      <div class="stamp">
+        <div class="grunge"></div>
+        <span class="stamp-label">SPECIAL<br>企画</span>
+      </div>
       <h3>史学科特別企画<br>「史学科捜査ツアー」</h3>
       <p class="room"><span class="pin"></span>3号館 3302教室</p>
-       <div class="times">
+      <div class="times">
         <span class="t">11:00 – 16:00</span>
       </div>
     </article>
-  </div>
 
     <article class="file" data-no="FILE — 02">
-      <div class="stamp">学科<br>説明</div>
+      <div class="stamp">
+        <div class="grunge"></div>
+        <span class="stamp-label">学科<br>説明</span>
+      </div>
       <h3>学科説明・模擬授業　<br>古川隆久先生<br>「戦時下日本のハワイ音楽から歴史を読み解く」</h3>
       <p class="room"><span class="pin"></span>3号館 3305教室</p>
       <div class="times">
@@ -441,6 +532,7 @@
   <div class="divider"><span>KEEP OUT</span></div>
 
   <div class="rally">
+    <p class="eyebrow-mini">MISSION</p>
     <h4>スタンプラリー開催中</h4>
     <ul>
       <li>史学科主要３カ所を巡るスタンプラリーを実施</li>
@@ -521,36 +613,39 @@
     lockScroll(true);
 
     // t=0 image1 visible
-    setTimeout(()=>{ f1.classList.add('dying'); }, 1200);          // image1 starts to flicker/die
+    // FIX(2): 史学科ビジュアル(site.png)をしっかり見せるため、
+    // 崩れ始めるタイミングを1200ms→2000msへ後ろ倒し（以降も連動して後ろ倒し）
+    setTimeout(()=>{ f1.classList.add('dying'); }, 2000);          // image1 starts to flicker/die
 
     setTimeout(()=>{
       startNoise();
       canvas.classList.add('burst');                               // ザザー：ノイズ／グリッチ開始
-    }, 1650);
+    }, 2450);
 
-    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 1700);           // image1 completely hidden
+    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 2500);           // image1 completely hidden
 
     setTimeout(()=>{
       blackout.classList.add('seq');                                // 画面が黒くなる
-    }, 1900);
+    }, 2700);
 
     setTimeout(()=>{
       stopNoise();
       canvas.classList.remove('burst');
       canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
-    }, 2350);                                                       // ザザーが収まる（この間は真っ黒）
+    }, 3150);                                                       // ザザーが収まる（この間は真っ黒）
 
-    // blackout animation (1.3s from 1900ms) finishes fading out around 3200ms,
-    // revealing image2 which has been sitting underneath the whole time.
+    // blackout animation finishes fading out, revealing image2 which has
+    // been sitting underneath the whole time.
     setTimeout(()=>{
       f3.style.opacity = 1;
       f3.classList.add('in');
-    }, 3400);                                                       // 画像2の上にタイトルが浮かび上がる
+      f2.classList.add('reveal-zoom');                               // FIX(1): 背後のモノクロ画像にゆっくりズーム
+    }, 4200);                                                       // 画像2の上にタイトルが浮かび上がる
 
     setTimeout(()=>{
       scrollcue.classList.add('show');
       lockScroll(false);                                            // ここで初めてスクロール解禁
-    }, 5100);
+    }, 5900);
   }
 
   window.addEventListener('load', sequence);
@@ -559,3 +654,4 @@
 
 </body>
 </html>
+
