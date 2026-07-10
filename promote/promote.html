@@ -273,11 +273,12 @@
   }
   .file:nth-child(1){ --rot:-0.6deg; }
   .file:nth-child(2){ --rot:0.5deg; }
-  /* FIX(4): タップ/ホバーで少し沈む反応をつけ、「手に取れる資料」感を出す */
+  /* FIX: タップ/ホバーで少し拡大して手前に浮くように変更（「これを見ている」感） */
   .file:hover,
   .file:active{
-    transform: rotate(var(--rot,0deg)) scale(0.985) translateY(2px);
-    box-shadow:0 10px 26px -14px rgba(0,0,0,0.8);
+    transform: rotate(var(--rot,0deg)) scale(1.03) translateY(-3px);
+    box-shadow:0 26px 54px -18px rgba(0,0,0,0.75);
+    z-index:2;
   }
   .file::before{
     content:attr(data-no);
@@ -529,7 +530,7 @@
     </article>
   </div>
 
-  <div class="divider"><span>KEEP OUT</span></div>
+  <div class="divider"></div>
 
   <div class="rally">
     <p class="eyebrow-mini">MISSION</p>
@@ -654,4 +655,3 @@
 
 </body>
 </html>
-
