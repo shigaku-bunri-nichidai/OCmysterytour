@@ -291,45 +291,15 @@
     box-shadow:0 6px 14px rgba(0,0,0,0.5);
   }
 
-  /* --- FIX: スタンプの見た目。
-     以前はノイズ画像でマスクして文字ごと削っていたため「シミのように
-     ぼやけたスタンプ」になっていた。文字は削らず、うっすらノイズを
-     multiplyで重ねるだけにして、実際のハンコらしい二重丸＋掠れ感に変更 --- */
+  /* FIX: アップロードされた実際のスタンプ画像を使用する形に変更 */
   .file .stamp{
     position:absolute; top:22px; right:22px;
-    width:66px; height:66px;
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    color:var(--blood);
-    font-family:"Special Elite",monospace;
-    font-weight:700;
-    font-size:9.5px; letter-spacing:0.04em;
-    text-align:center; line-height:1.35;
-    transform:rotate(-14deg);
+    width:72px; height:72px;
   }
-  .file .stamp::before{
-    content:"";
-    position:absolute; inset:0;
-    border:2.5px solid var(--blood);
-    border-radius:50%;
-  }
-  .file .stamp::after{
-    content:"";
-    position:absolute; inset:5px;
-    border:1px solid var(--blood);
-    border-radius:50%;
-    opacity:0.7;
-  }
-  .file .stamp .stamp-label{
-    position:relative; z-index:1;
-  }
-  .file .stamp .grunge{
-    position:absolute; inset:-2px;
-    border-radius:50%;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    mix-blend-mode:multiply;
-    opacity:0.35;
-    pointer-events:none;
+  .file .stamp img{
+    width:100%; height:100%;
+    object-fit:contain;
+    display:block;
   }
 
   .file h3{
@@ -460,7 +430,7 @@
   @media (max-width: 520px){
     .files{ row-gap:64px; }
     .file h3{ max-width:66%; font-size:17.5px; }
-    .file .stamp{ width:58px; height:58px; font-size:8.5px; top:18px; right:18px; }
+    .file .stamp{ width:56px; height:56px; top:18px; right:18px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -496,7 +466,7 @@
   <p class="eyebrow">CASE FILE — アントワネット捜査記録</p>
   <h2>あなたも「捜査官」として、<br>史学科の教室に散らばる手がかりを追え。</h2>
   <p class="lede">
-    教室に現れた肖像画と不穏な気配。知られてはいけない数々の証拠。<br>
+    教室に現れた肖像画と不穏な気配。知られてはいけない数々の証拠。
     マリー・アントワネットの「真実」があなたを待っている。<br>
     史学科の企画に足を運び、手がかりを集めよう。
   </p>
@@ -505,8 +475,7 @@
   <div class="files">
     <article class="file" data-no="FILE — 01">
       <div class="stamp">
-        <div class="grunge"></div>
-        <span class="stamp-label">SPECIAL<br>企画</span>
+        <img src="stamp1.png" alt="SPECIAL企画スタンプ">
       </div>
       <h3>史学科特別企画<br>「史学科捜査ツアー」</h3>
       <p class="room"><span class="pin"></span>3号館 3302教室</p>
@@ -517,10 +486,9 @@
 
     <article class="file" data-no="FILE — 02">
       <div class="stamp">
-        <div class="grunge"></div>
-        <span class="stamp-label">学科<br>説明</span>
+        <img src="stamp2.png" alt="学科説明・模擬授業スタンプ">
       </div>
-      <h3>学科説明・模擬授業　<br>古川隆久先生<br>「戦時下日本のハワイ音楽から<br>歴史を読み解く」</h3>
+      <h3>学科説明・模擬授業　<br>古川隆久先生<br>「戦時下日本のハワイ音楽から歴史を読み解く」</h3>
       <p class="room"><span class="pin"></span>3号館 3305教室</p>
       <div class="times">
         <span class="t">11:00 – 11:40</span>
@@ -539,7 +507,7 @@
       <li>史学科主要３カ所を巡るスタンプラリーを実施</li>
       <li>すべてのスタンプを集めて捜査を完了させよう</li>
     </ul>
-    <span class="prize">完走者にオリジナルグッズをプレゼント</span>
+    <span class="prize">完走者にはオリジナルグッズをプレゼント</span>
   </div>
 </section>
 
