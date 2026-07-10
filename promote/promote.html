@@ -309,6 +309,8 @@
     line-height:1.55;
     max-width:76%;
     margin-bottom:16px;
+    word-break:keep-all;
+    overflow-wrap:break-word;
   }
   .file .room{
     font-family:"Special Elite",monospace;
@@ -429,7 +431,7 @@
      見出しと衝突しないよう見出し幅を調整 --- */
   @media (max-width: 520px){
     .files{ row-gap:64px; }
-    .file h3{ max-width:66%; font-size:17.5px; }
+    .file h3{ max-width:88%; font-size:17.5px; }
     .file .stamp{ width:56px; height:56px; top:18px; right:26px; }
   }
 
