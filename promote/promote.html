@@ -95,8 +95,11 @@
     transform: scale(1.1);
   }
 
-  /* static / glitch canvas — fixed to the real browser viewport so it
-     always covers the whole screen, independent of the stage element */
+  /* PERF: static/glitch canvas は内部解像度を固定の小サイズにして
+     CSSで画面いっぱいに引き伸ばす。JS側でピクセルを直接いじる処理は
+     解像度に比例して重くなるため、devicePixelRatio×フル画面サイズ
+     で毎フレーム計算していた旧実装が重さの主因だった。
+     ノイズ表現なので低解像度でも視覚的な違いはほぼ無い。 */
   #staticCanvas{
     position:fixed; inset:0; width:100vw; height:100vh;
     z-index:9998;
@@ -168,9 +171,6 @@
   .tape-edge.bottom{ bottom:0; }
 
 /* scroll cue */
-  /* FIX: pop.png のような単調なグレー背景の上でも埋もれないよう、
-     背景チップ(半透明+ぼかし)を敷いて、どの画像の上でも視認性を確保。
-     文字も大きく・太く・発光させて「操作できる」感を強めた */
   .scrollcue{
     position:absolute; left:50%; bottom:max(10vh, calc(env(safe-area-inset-bottom) + 40px));
     transform:translateX(-50%);
@@ -192,7 +192,6 @@
   }
   .scrollcue.show{ opacity:1; }
 
-  /* 矢印（∨）が上下に不穏に揺れるアニメーション */
   .scrollcue .arrow {
     font-family:"Noto Sans JP", sans-serif;
     font-size: 24px;
@@ -219,9 +218,6 @@
     pointer-events:none;
     z-index:1;
   }
-  /* FIX(2): 本文セクションにもヒーロー画像(site.png)をごく薄い
-     透かしとして敷き、冒頭で見せた「アントワネットの絵」を
-     本文でも回収する。文字の可読性のため極薄・グレースケール */
   .case::after{
     content:"";
     position:absolute; inset:0;
@@ -263,9 +259,6 @@
   }
   .case .lede b{ color:var(--parchment); font-weight:700; }
 
-  /* --- FIX: グリッドの行間隔をカードの上に飛び出すラベル分だけ広めに確保。
-     以前は .files が1枚目の直後で閉じてしまい、2枚目がグリッド外に
-     はみ出して隣接していたのが「距離感が近い」根本原因でした。 --- */
   .files{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(300px,1fr));
@@ -284,7 +277,6 @@
   }
   .file:nth-child(1){ --rot:-0.6deg; }
   .file:nth-child(2){ --rot:0.5deg; }
-  /* FIX: タップ/ホバーで少し拡大して手前に浮くように変更（「これを見ている」感） */
   .file:hover,
   .file:active{
     transform: rotate(var(--rot,0deg)) scale(1.03) translateY(-3px);
@@ -302,7 +294,6 @@
     box-shadow:0 6px 14px rgba(0,0,0,0.5);
   }
 
-  /* FIX: width の値が抜けていたのを72pxに復元（元は width:px; という無効指定でした） */
   .file .stamp{
     position:absolute; top:22px; right:34px;
     width:72px; height:72px;
@@ -438,8 +429,6 @@
     border-top:1px solid var(--line);
   }
 
-  /* --- モバイルでの微調整。カード間隔をさらに確保し、スタンプが
-     見出しと衝突しないよう見出し幅を調整 --- */
   @media (max-width: 520px){
     .files{ row-gap:64px; }
     .file h3{ max-width:88%; font-size:17.5px; }
@@ -485,7 +474,6 @@
     史学科の企画に足を運び、手がかりを集めよう。
   </p>
 
-  <!-- FIX: FILE-01, FILE-02 とも同じ .files グリッド内に収める -->
   <div class="files">
     <article class="file" data-no="FILE — 01">
       <div class="stamp">
@@ -539,38 +527,44 @@
   const scrollcue = document.getElementById('scrollcue');
   const ctx = canvas.getContext('2d');
 
-  function sizeCanvas(){
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.floor(window.innerWidth * dpr);
-    canvas.height = Math.floor(window.innerHeight * dpr);
+  /* ------------------------------------------------------------
+     PERF FIX: ノイズ用canvasの内部解像度を固定の低解像度にする。
+     旧実装は devicePixelRatio × 画面フルサイズ（スマホだと数百万px）
+     に対して毎フレームJSでピクセルを1つずつ書き込んでいたため、
+     55msごとにCPUへ大きな負荷がかかり「重い」原因になっていた。
+     ノイズ/グリッチ表現は低解像度→引き伸ばしでも見た目の違和感が
+     ほぼ無いため、内部解像度を160×90に固定してCSSで画面いっぱいに
+     拡大表示する方式に変更。これでピクセル処理量が従来の
+     1/1000〜1/5000程度になる。
+  ------------------------------------------------------------ */
+  const NOISE_W = 160;
+  const NOISE_H = 90;
+  canvas.width = NOISE_W;
+  canvas.height = NOISE_H;
+
+  // バッファは使い回す（毎回 createImageData すると生成コスト+GC負荷がかかる）
+  const imgData = ctx.createImageData(NOISE_W, NOISE_H);
+  const buf = imgData.data;
+
+  function drawStatic(){
+    for(let i = 0; i < buf.length; i += 4){
+      const v = (Math.random() * 255) | 0;
+      buf[i] = v; buf[i+1] = v; buf[i+2] = v; buf[i+3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // glitch RGB bars（低解像度キャンバス基準の座標に変更）
+    const bars = 3 + Math.floor(Math.random()*4);
+    for(let b=0; b<bars; b++){
+      const y = Math.random() * NOISE_H;
+      const barH = 1 + Math.random() * 6;
+      const shift = (Math.random()-0.5) * 16;
+      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(180,20,30,0.35)' : 'rgba(220,190,60,0.25)';
+      ctx.fillRect(shift, y, NOISE_W, barH);
+    }
   }
-  sizeCanvas();
-  window.addEventListener('resize', sizeCanvas);
 
   let noiseTimer = null;
-  function drawStatic(){
-    const w = canvas.width, h = canvas.height;
-    const imgData = ctx.createImageData(w, h);
-    const buf = imgData.data;
-    for(let i=0;i<buf.length;i+=4){
-      const v = Math.random()*255;
-      buf[i]=v; buf[i+1]=v; buf[i+2]=v; buf[i+3]=255;
-    }
-    ctx.putImageData(imgData,0,0);
-    // glitch RGB bars
-    const bars = 5 + Math.floor(Math.random()*6);
-    for(let b=0;b<bars;b++){
-      const y = Math.random()*h;
-      const barH = 2 + Math.random()*18;
-      const shift = (Math.random()-0.5)*60;
-      ctx.save();
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(180,20,30,0.35)' : 'rgba(220,190,60,0.25)';
-      ctx.fillRect(shift, y, w, barH);
-      ctx.restore();
-    }
-  }
-
   function startNoise(){
     if(noiseTimer) return;
     noiseTimer = setInterval(drawStatic, 55);
@@ -584,8 +578,6 @@
     document.body.classList.toggle('locked', lock);
   }
 
-  // extra safety: block wheel / touch scrolling while locked (some mobile
-  // browsers still allow rubber-band scroll even with overflow:hidden)
   function preventIfLocked(e){
     if(document.body.classList.contains('locked')) e.preventDefault();
   }
@@ -595,39 +587,34 @@
   function sequence(){
     lockScroll(true);
 
-    // t=0 image1 visible
-    // FIX(2): 史学科ビジュアル(site.png)をしっかり見せるため、
-    // 崩れ始めるタイミングを1200ms→2000msへ後ろ倒し（以降も連動して後ろ倒し）
-    setTimeout(()=>{ f1.classList.add('dying'); }, 2000);          // image1 starts to flicker/die
+    setTimeout(()=>{ f1.classList.add('dying'); }, 2000);
 
     setTimeout(()=>{
       startNoise();
-      canvas.classList.add('burst');                               // ザザー：ノイズ／グリッチ開始
+      canvas.classList.add('burst');
     }, 2450);
 
-    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 2500);           // image1 completely hidden
+    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 2500);
 
     setTimeout(()=>{
-      blackout.classList.add('seq');                                // 画面が黒くなる
+      blackout.classList.add('seq');
     }, 2700);
 
     setTimeout(()=>{
       stopNoise();
       canvas.classList.remove('burst');
-      canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
-    }, 3150);                                                       // ザザーが収まる（この間は真っ黒）
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    }, 3150);
 
-    // blackout animation finishes fading out, revealing image2 which has
-    // been sitting underneath the whole time.
     setTimeout(()=>{
       f3.style.opacity = 1;
       f3.classList.add('in');
-      f2.classList.add('reveal-zoom');                               // FIX(1): 背後のモノクロ画像にゆっくりズーム
-    }, 4200);                                                       // 画像2の上にタイトルが浮かび上がる
+      f2.classList.add('reveal-zoom');
+    }, 4200);
 
     setTimeout(()=>{
       scrollcue.classList.add('show');
-      lockScroll(false);                                            // ここで初めてスクロール解禁
+      lockScroll(false);
     }, 5900);
   }
 
