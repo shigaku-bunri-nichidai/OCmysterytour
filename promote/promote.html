@@ -135,15 +135,15 @@
   @keyframes staticBurst{
     0%{opacity:0;}
     10%{opacity:0.95;}
-    55%{opacity:0.95;}
+    85%{opacity:0.95;}
     100%{opacity:0;}
   }
   #staticCanvas.burst{ animation: staticBurst 1.4s steps(6) forwards; }
 
   @keyframes blackoutSeq{
     0%{opacity:0;}
-    30%{opacity:1;}
-    55%{opacity:1;}
+    20%{opacity:1;}
+    58%{opacity:1;}
     100%{opacity:0;}
   }
   .blackout.seq{ animation: blackoutSeq 0.7s ease-in-out forwards; }
@@ -465,7 +465,7 @@
 </section>
 
 <section class="case">
-  <p class="eyebrow">CASE FILE : antoinette</p>
+  <p class="eyebrow">CASE FILE : アントワネット捜査記録</p>
   <h2>あなたも「捜査官」として、<br>史学科の教室に散らばる手がかりを追え。</h2>
   <p class="lede">
     教室に現れた肖像画と不穏な気配。<br>
@@ -586,15 +586,13 @@
   window.addEventListener('touchmove', preventIfLocked, {passive:false});
 
   /* UX調整:
-     - ザー(1.4s, 900ms〜2300ms)のほとんどが暗転に早々に覆われて
-       見えなくなっていた問題を修正。暗転の開始を2000msまで
-       後ろ倒しし、「見えているザーの時間」を大幅に延長（900〜2000msの
-       約1.1秒はノイズが暗転なしでそのまま見える）。
-     - 暗転自体も 1.7s→0.7s に短縮し、「ザー後の黒だけの時間」を
-       圧縮。暗転が完全に黒くなるタイミング(2210ms)はザーが
-       止まるタイミング(2300ms)より前、暗転が薄れ始めるタイミング
-       (2385ms)はザー停止より後なので、ザーが消える瞬間は
-       これまで通り黒画面の中に隠れている。 */
+     - ザー(1.4s, 900ms〜2300ms)自体のフェードアウトは85%地点
+       (=2090ms)まで我慢させ、そこから暗転の立ち上がりを
+       ぴったり同期させることで、「ノイズは薄れ始めたけど暗転は
+       まだ来てない」隙間から下の画像が見えてしまう問題を解消。
+     - これにより 900〜1950ms 前後はノイズが暗転なしでフルに
+       見え続け（=見えているザーの時間は長いまま）、暗転自体も
+       0.7sと短いままなので「ザー後の黒だけの時間」も短く保てる。 */
   function sequence(){
     lockScroll(true);
 
@@ -609,7 +607,7 @@
 
     setTimeout(()=>{
       blackout.classList.add('seq');
-    }, 2000);
+    }, 1950);
 
     setTimeout(()=>{
       stopNoise();
