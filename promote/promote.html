@@ -129,7 +129,7 @@
     96%{opacity:1;}
     100%{opacity:1;}
   }
-  #f1.dying{ animation: flicker1 0.5s steps(1) forwards; }
+  #f1.dying{ animation: flicker1 0.3s steps(1) forwards; }
   #f1.gone{ opacity:0; transition:opacity .05s; }
 
   @keyframes staticBurst{
@@ -138,15 +138,15 @@
     55%{opacity:0.95;}
     100%{opacity:0;}
   }
-  #staticCanvas.burst{ animation: staticBurst .7s steps(6) forwards; }
+  #staticCanvas.burst{ animation: staticBurst 1.4s steps(6) forwards; }
 
   @keyframes blackoutSeq{
     0%{opacity:0;}
-    30%{opacity:1;}
-    68%{opacity:1;}
+    15%{opacity:1;}
+    80%{opacity:1;}
     100%{opacity:0;}
   }
-  .blackout.seq{ animation: blackoutSeq 1.3s ease-in-out forwards; }
+  .blackout.seq{ animation: blackoutSeq 1.7s ease-in-out forwards; }
 
   @keyframes titleFlicker{
     0%{opacity:0;}
@@ -159,7 +159,7 @@
     36%{opacity:1;}
     100%{opacity:1;}
   }
-  #f3-wrap.in{ animation: titleFlicker 1.6s steps(1) forwards; }
+  #f3-wrap.in{ animation: titleFlicker 0.95s steps(1) forwards; }
 
   /* tape strip top of stage, echoes uploaded artwork */
   .tape-edge{
@@ -466,7 +466,7 @@
 
 <section class="case">
   <p class="eyebrow">CASE FILE : アントワネット捜査記録</p>
-  <h2>あなたも「捜査官」として、<br>史学科の教室に散らばる手がかりを追え。</h2>
+  <h2>あなたも「捜査官」として、<br>史学科の教室に散らばる<br>手がかりを追え。</h2>
   <p class="lede">
     教室に現れた肖像画と不穏な気配。<br>
     知られてはいけない数々の証拠。<br>
@@ -528,39 +528,40 @@
   const ctx = canvas.getContext('2d');
 
   /* ------------------------------------------------------------
-     PERF FIX: ノイズ用canvasの内部解像度を固定の低解像度にする。
-     旧実装は devicePixelRatio × 画面フルサイズ（スマホだと数百万px）
-     に対して毎フレームJSでピクセルを1つずつ書き込んでいたため、
-     55msごとにCPUへ大きな負荷がかかり「重い」原因になっていた。
-     ノイズ/グリッチ表現は低解像度→引き伸ばしでも見た目の違和感が
-     ほぼ無いため、内部解像度を160×90に固定してCSSで画面いっぱいに
-     拡大表示する方式に変更。これでピクセル処理量が従来の
-     1/1000〜1/5000程度になる。
-  ------------------------------------------------------------ */
-  const NOISE_W = 160;
-  const NOISE_H = 90;
-  canvas.width = NOISE_W;
-  canvas.height = NOISE_H;
-
-  // バッファは使い回す（毎回 createImageData すると生成コスト+GC負荷がかかる）
-  const imgData = ctx.createImageData(NOISE_W, NOISE_H);
-  const buf = imgData.data;
+     ノイズ演出は起動時に0.4〜0.7秒だけ動く一瞬のバーストで、
+     常時動き続けるわけではない。そのためキャンバス解像度を
+     落とすより「見た目の粗さ」の方が体感に効いていた（＝低解像度化は
+     割に合わなかった）ので、解像度は元のフル画面サイズに戻す。
+     ただし、毎フレーム createImageData を新規生成するのはムダな
+     アロケーション（GC負荷）なので、そこだけは使い回すようにして
+     旧実装より軽くしている。 */
+  function sizeCanvas(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    imgData = ctx.createImageData(canvas.width, canvas.height);
+    buf = imgData.data;
+  }
+  let imgData, buf;
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
 
   function drawStatic(){
+    const w = canvas.width, h = canvas.height;
     for(let i = 0; i < buf.length; i += 4){
       const v = (Math.random() * 255) | 0;
       buf[i] = v; buf[i+1] = v; buf[i+2] = v; buf[i+3] = 255;
     }
     ctx.putImageData(imgData, 0, 0);
 
-    // glitch RGB bars（低解像度キャンバス基準の座標に変更）
-    const bars = 3 + Math.floor(Math.random()*4);
+    // glitch RGB bars
+    const bars = 5 + Math.floor(Math.random()*6);
     for(let b=0; b<bars; b++){
-      const y = Math.random() * NOISE_H;
-      const barH = 1 + Math.random() * 6;
-      const shift = (Math.random()-0.5) * 16;
+      const y = Math.random() * h;
+      const barH = 2 + Math.random() * 18;
+      const shift = (Math.random()-0.5) * 60;
       ctx.fillStyle = Math.random() > 0.5 ? 'rgba(180,20,30,0.35)' : 'rgba(220,190,60,0.25)';
-      ctx.fillRect(shift, y, NOISE_W, barH);
+      ctx.fillRect(shift, y, w, barH);
     }
   }
 
@@ -584,38 +585,45 @@
   window.addEventListener('wheel', preventIfLocked, {passive:false});
   window.addEventListener('touchmove', preventIfLocked, {passive:false});
 
+  /* UX調整:
+     - 最初の静止表示 → ザー開始までは短いまま（900ms）
+     - ザーを 0.7s → 1.4s（2倍）に延長。それに合わせて暗転の
+       黒プラトー区間も 0.9s→1.7s に拡張してあるので、ザーが
+       消える瞬間は変わらず黒画面の中に隠れている
+     - ザーが伸びた分、タイトル表示・アンロックのタイミングも
+       後ろ倒し（合計ロック時間は 3.25s→4.05s に増加） */
   function sequence(){
     lockScroll(true);
 
-    setTimeout(()=>{ f1.classList.add('dying'); }, 2000);
+    setTimeout(()=>{ f1.classList.add('dying'); }, 700);
 
     setTimeout(()=>{
       startNoise();
       canvas.classList.add('burst');
-    }, 2450);
+    }, 900);
 
-    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 2500);
+    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 1000);
 
     setTimeout(()=>{
       blackout.classList.add('seq');
-    }, 2700);
+    }, 1050);
 
     setTimeout(()=>{
       stopNoise();
       canvas.classList.remove('burst');
       ctx.clearRect(0,0,canvas.width,canvas.height);
-    }, 3150);
+    }, 2300);
 
     setTimeout(()=>{
       f3.style.opacity = 1;
       f3.classList.add('in');
       f2.classList.add('reveal-zoom');
-    }, 4200);
+    }, 2900);
 
     setTimeout(()=>{
       scrollcue.classList.add('show');
       lockScroll(false);
-    }, 5900);
+    }, 4050);
   }
 
   window.addEventListener('load', sequence);
