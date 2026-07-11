@@ -142,11 +142,11 @@
 
   @keyframes blackoutSeq{
     0%{opacity:0;}
-    15%{opacity:1;}
-    80%{opacity:1;}
+    30%{opacity:1;}
+    55%{opacity:1;}
     100%{opacity:0;}
   }
-  .blackout.seq{ animation: blackoutSeq 1.7s ease-in-out forwards; }
+  .blackout.seq{ animation: blackoutSeq 0.7s ease-in-out forwards; }
 
   @keyframes titleFlicker{
     0%{opacity:0;}
@@ -465,8 +465,8 @@
 </section>
 
 <section class="case">
-  <p class="eyebrow">CASE FILE : アントワネット捜査記録</p>
-  <h2>あなたも「捜査官」として、<br>史学科の教室に散らばる<br>手がかりを追え。</h2>
+  <p class="eyebrow">CASE FILE : antoinette</p>
+  <h2>あなたも「捜査官」として、<br>史学科の教室に散らばる手がかりを追え。</h2>
   <p class="lede">
     教室に現れた肖像画と不穏な気配。<br>
     知られてはいけない数々の証拠。<br>
@@ -586,12 +586,15 @@
   window.addEventListener('touchmove', preventIfLocked, {passive:false});
 
   /* UX調整:
-     - 最初の静止表示 → ザー開始までは短いまま（900ms）
-     - ザーを 0.7s → 1.4s（2倍）に延長。それに合わせて暗転の
-       黒プラトー区間も 0.9s→1.7s に拡張してあるので、ザーが
-       消える瞬間は変わらず黒画面の中に隠れている
-     - ザーが伸びた分、タイトル表示・アンロックのタイミングも
-       後ろ倒し（合計ロック時間は 3.25s→4.05s に増加） */
+     - ザー(1.4s, 900ms〜2300ms)のほとんどが暗転に早々に覆われて
+       見えなくなっていた問題を修正。暗転の開始を2000msまで
+       後ろ倒しし、「見えているザーの時間」を大幅に延長（900〜2000msの
+       約1.1秒はノイズが暗転なしでそのまま見える）。
+     - 暗転自体も 1.7s→0.7s に短縮し、「ザー後の黒だけの時間」を
+       圧縮。暗転が完全に黒くなるタイミング(2210ms)はザーが
+       止まるタイミング(2300ms)より前、暗転が薄れ始めるタイミング
+       (2385ms)はザー停止より後なので、ザーが消える瞬間は
+       これまで通り黒画面の中に隠れている。 */
   function sequence(){
     lockScroll(true);
 
@@ -606,7 +609,7 @@
 
     setTimeout(()=>{
       blackout.classList.add('seq');
-    }, 1050);
+    }, 2000);
 
     setTimeout(()=>{
       stopNoise();
@@ -618,12 +621,12 @@
       f3.style.opacity = 1;
       f3.classList.add('in');
       f2.classList.add('reveal-zoom');
-    }, 2900);
+    }, 2800);
 
     setTimeout(()=>{
       scrollcue.classList.add('show');
       lockScroll(false);
-    }, 4050);
+    }, 3900);
   }
 
   window.addEventListener('load', sequence);
