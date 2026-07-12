@@ -595,45 +595,45 @@
   window.addEventListener('touchmove', preventIfLocked, {passive:false});
 
   /* UX調整:
-     - ザー(1.4s, 900ms〜2300ms)自体のフェードアウトは85%地点
-       (=2090ms)まで我慢させ、そこから暗転の立ち上がりを
+     - ザー(1.4s, 1400ms〜2800ms)自体のフェードアウトは85%地点
+       まで我慢させ、そこから暗転の立ち上がりを
        ぴったり同期させることで、「ノイズは薄れ始めたけど暗転は
        まだ来てない」隙間から下の画像が見えてしまう問題を解消。
-     - これにより 900〜1950ms 前後はノイズが暗転なしでフルに
-       見え続け（=見えているザーの時間は長いまま）、暗転自体も
-       0.7sと短いままなので「ザー後の黒だけの時間」も短く保てる。 */
+     - 最初の画面(f1)の表示時間を+500ms延長。dying開始/ノイズ開始/
+       暗転/タイトル表示/scrollcue表示のすべてを同じ量だけ後ろに
+       ずらして、間隔（テンポ）自体は変えていない。 */
   function sequence(){
     lockScroll(true);
 
-    setTimeout(()=>{ f1.classList.add('dying'); }, 700);
+    setTimeout(()=>{ f1.classList.add('dying'); }, 1200);
 
     setTimeout(()=>{
       startNoise();
       canvas.classList.add('burst');
-    }, 900);
+    }, 1400);
 
-    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 1000);
+    setTimeout(()=>{ f1.classList.remove('dying'); f1.classList.add('gone'); }, 1500);
 
     setTimeout(()=>{
       blackout.classList.add('seq');
-    }, 1950);
+    }, 2450);
 
     setTimeout(()=>{
       stopNoise();
       canvas.classList.remove('burst');
       ctx.clearRect(0,0,canvas.width,canvas.height);
-    }, 2300);
+    }, 2800);
 
     setTimeout(()=>{
       f3.style.opacity = 1;
       f3.classList.add('in');
       f2.classList.add('reveal-zoom');
-    }, 2800);
+    }, 3300);
 
     setTimeout(()=>{
       scrollcue.classList.add('show');
       lockScroll(false);
-    }, 3900);
+    }, 4400);
   }
 
   window.addEventListener('load', sequence);
