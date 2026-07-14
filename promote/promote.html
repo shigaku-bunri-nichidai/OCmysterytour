@@ -645,17 +645,17 @@
   window.addEventListener('load', sequence);
 
   // X (Twitter) share button
-  (function(){
-    const btn = document.getElementById('xShareBtn');
-    const pageUrl = "https://shigaku-bunri-nichidai.github.io/OCmysterytour/promote/promote.html";
-    <br>const hashtags = "史学科捜査ツアー";
+ (function(){
+  const btn = document.getElementById('xShareBtn');
+  const pageUrl = "https://shigaku-bunri-nichidai.github.io/OCmysterytour/promote/promote.html";
+  const text = "#史学科捜査ツアー";
 
-    const intentUrl = "https://twitter.com/intent/tweet"
-      + "?url=" + encodeURIComponent(pageUrl)
-      + "&hashtags=" + encodeURIComponent(hashtags);
+  const intentUrl = "https://twitter.com/intent/tweet"
+    + "?text=" + encodeURIComponent(text)
+    + "&url=" + encodeURIComponent(pageUrl);
 
-    btn.href = intentUrl;
-  })();
+  btn.href = intentUrl;
+})();
 })();
 </script>
 
