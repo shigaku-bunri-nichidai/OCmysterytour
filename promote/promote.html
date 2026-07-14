@@ -84,9 +84,6 @@
     filter: drop-shadow(0 0 22px rgba(0,0,0,0.85));
   }
 
-  /* FIX(1): タイトル表示時、背後に残っているsite2.webp(モノクロ)へ
-     ゆっくりズームをかけて、単調なグレーに見えないよう質感と
-     わずかな動きを持たせる */
   #f2 img{
     transition: transform 4.5s ease-out;
     transform: scale(1);
@@ -95,11 +92,6 @@
     transform: scale(1.1);
   }
 
-  /* PERF: static/glitch canvas は内部解像度を固定の小サイズにして
-     CSSで画面いっぱいに引き伸ばす。JS側でピクセルを直接いじる処理は
-     解像度に比例して重くなるため、devicePixelRatio×フル画面サイズ
-     で毎フレーム計算していた旧実装が重さの主因だった。
-     ノイズ表現なので低解像度でも視覚的な違いはほぼ無い。 */
   #staticCanvas{
     position:fixed; inset:0; width:100vw; height:100vh;
     z-index:9998;
@@ -119,7 +111,6 @@
     opacity:0.5;
   }
 
-  /* animations for image 1 -> flicker before it dies */
   @keyframes flicker1{
     0%{opacity:1;}
     92%{opacity:1;}
@@ -161,7 +152,6 @@
   }
   #f3-wrap.in{ animation: titleFlicker 0.95s steps(1) forwards; }
 
-  /* tape strip top of stage, echoes uploaded artwork */
   .tape-edge{
     position:absolute; left:0; right:0; height:26px;
     background: repeating-linear-gradient(45deg, var(--tape) 0 18px, #171412 18px 36px);
@@ -170,7 +160,6 @@
   .tape-edge.top{ top:0; }
   .tape-edge.bottom{ bottom:0; }
 
-/* scroll cue */
   .scrollcue{
     position:absolute; left:50%; bottom:max(10vh, calc(env(safe-area-inset-bottom) + 40px));
     transform:translateX(-50%);
@@ -419,6 +408,34 @@
     color:#1b1712;
   }
 
+  /* ---------- X SHARE BUTTON ---------- */
+  .x-share{
+    position:fixed;
+    right:20px;
+    bottom:max(20px, env(safe-area-inset-bottom));
+    z-index:60;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#000;
+    color:var(--parchment);
+    border:1px solid var(--tape);
+    border-radius:999px;
+    padding:12px 18px;
+    font-family:"Special Elite",monospace;
+    font-size:13px;
+    letter-spacing:0.08em;
+    text-decoration:none;
+    box-shadow:0 12px 26px -10px rgba(0,0,0,0.7);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .x-share:hover,
+  .x-share:active{
+    transform:translateY(-2px);
+    box-shadow:0 16px 30px -10px rgba(227,194,60,0.4);
+  }
+  .x-share svg{ width:16px; height:16px; fill:var(--parchment); flex:none; }
+
   footer{
     padding:40px 6vw 60px;
     color:var(--ash);
@@ -433,6 +450,7 @@
     .files{ row-gap:64px; }
     .file h3{ max-width:88%; font-size:17.5px; }
     .file .stamp{ width:56px; height:56px; top:18px; right:26px; }
+    .x-share{ padding:11px 16px; font-size:12px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -526,6 +544,11 @@
   史学科 × 謎解き — 史学科事務室監修
 </footer>
 
+<a class="x-share" id="xShareBtn" target="_blank" rel="noopener noreferrer">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-7.2 8.3L23.3 22h-6.6l-5.2-6.8L5.4 22H2.2l7.7-8.9L1 2h6.8l4.7 6.2L18.9 2Zm-1.2 18h1.8L7.4 4H5.5l12.2 16Z"/></svg>
+  <span>Xでシェア</span>
+</a>
+
 <script>
 (function(){
   const f1 = document.getElementById('f1');
@@ -536,14 +559,6 @@
   const scrollcue = document.getElementById('scrollcue');
   const ctx = canvas.getContext('2d');
 
-  /* ------------------------------------------------------------
-     ノイズ演出は起動時に0.4〜0.7秒だけ動く一瞬のバーストで、
-     常時動き続けるわけではない。そのためキャンバス解像度を
-     落とすより「見た目の粗さ」の方が体感に効いていた（＝低解像度化は
-     割に合わなかった）ので、解像度は元のフル画面サイズに戻す。
-     ただし、毎フレーム createImageData を新規生成するのはムダな
-     アロケーション（GC負荷）なので、そこだけは使い回すようにして
-     旧実装より軽くしている。 */
   function sizeCanvas(){
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.floor(window.innerWidth * dpr);
@@ -563,7 +578,6 @@
     }
     ctx.putImageData(imgData, 0, 0);
 
-    // glitch RGB bars
     const bars = 5 + Math.floor(Math.random()*6);
     for(let b=0; b<bars; b++){
       const y = Math.random() * h;
@@ -594,14 +608,6 @@
   window.addEventListener('wheel', preventIfLocked, {passive:false});
   window.addEventListener('touchmove', preventIfLocked, {passive:false});
 
-  /* UX調整:
-     - ザー(1.4s, 1400ms〜2800ms)自体のフェードアウトは85%地点
-       まで我慢させ、そこから暗転の立ち上がりを
-       ぴったり同期させることで、「ノイズは薄れ始めたけど暗転は
-       まだ来てない」隙間から下の画像が見えてしまう問題を解消。
-     - 最初の画面(f1)の表示時間を+500ms延長。dying開始/ノイズ開始/
-       暗転/タイトル表示/scrollcue表示のすべてを同じ量だけ後ろに
-       ずらして、間隔（テンポ）自体は変えていない。 */
   function sequence(){
     lockScroll(true);
 
@@ -637,6 +643,19 @@
   }
 
   window.addEventListener('load', sequence);
+
+  // X (Twitter) share button
+  (function(){
+    const btn = document.getElementById('xShareBtn');
+    const pageUrl = "https://shigaku-bunri-nichidai.github.io/OCmysterytour/promote/promote.html";
+    const hashtags = "史学科捜査ツアー";
+
+    const intentUrl = "https://twitter.com/intent/tweet"
+      + "?url=" + encodeURIComponent(pageUrl)
+      + "&hashtags=" + encodeURIComponent(hashtags);
+
+    btn.href = intentUrl;
+  })();
 })();
 </script>
 
