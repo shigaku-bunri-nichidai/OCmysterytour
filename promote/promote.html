@@ -413,6 +413,132 @@
     color:#1b1712;
   }
 
+  /* ---------- STAMP RALLY MAP ---------- */
+  .mapblock{
+    max-width:680px;
+    margin-top:16px;
+  }
+  .mapblock .eyebrow-mini{
+    font-family:"Special Elite",monospace;
+    color:var(--tape);
+    font-size:11px;
+    letter-spacing:0.35em;
+    display:inline-flex; align-items:center; gap:8px;
+    margin-bottom:10px;
+  }
+  .mapblock .eyebrow-mini::before{
+    content:""; width:18px; height:1px; background:var(--tape);
+  }
+  .mapblock h4{
+    font-family:"Shippori Mincho",serif;
+    font-size:22px;
+    margin-bottom:8px;
+  }
+  .mapblock .maphint{
+    font-size:13.5px;
+    color:var(--parchment-dim);
+    line-height:1.9;
+    margin-bottom:22px;
+    max-width:520px;
+  }
+  .map-wrap{
+    position:relative;
+    max-width:640px;
+    border:1px solid rgba(227,194,60,0.5);
+    background:#000;
+    box-shadow:0 20px 50px -18px rgba(0,0,0,0.75);
+  }
+  .map-wrap::before{
+    content:"";
+    position:absolute; inset:0;
+    box-shadow: inset 0 0 40px 8px rgba(0,0,0,0.55);
+    pointer-events:none;
+    z-index:2;
+  }
+  .map-img{
+    width:100%;
+    display:block;
+    filter:saturate(0.85) contrast(1.05);
+  }
+  .map-pin{
+    position:absolute;
+    width:26px;
+    transform:translate(-50%,-92%);
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    z-index:3;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+    animation: pinFloat 1.8s ease-in-out infinite;
+  }
+  .map-pin img{ width:100%; display:block; }
+  .map-pin:nth-child(2){ animation-delay:.1s; }
+  .map-pin:nth-child(3){ animation-delay:.35s; }
+  .map-pin:nth-child(4){ animation-delay:.6s; }
+  @keyframes pinFloat{
+    0%,100%{ transform:translate(-50%,-92%); }
+    50%{ transform:translate(-50%,-104%); }
+  }
+
+  .map-modal{
+    position:fixed; inset:0; z-index:9997;
+    background:rgba(6,5,4,0.86);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .map-modal.show{ display:flex; }
+  .map-modal-card{
+    position:relative;
+    background:var(--parchment);
+    color:#1b1712;
+    width:min(360px, 92vw);
+    padding:30px 26px 26px;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.8);
+  }
+  .map-modal-card::before{
+    content:"EVIDENCE";
+    position:absolute; top:-14px; left:26px;
+    background:var(--blood);
+    color:var(--parchment);
+    font-family:"Special Elite",monospace;
+    font-size:11px; letter-spacing:0.2em;
+    padding:5px 12px;
+    box-shadow:0 6px 14px rgba(0,0,0,0.5);
+  }
+  .map-modal-close{
+    position:absolute; top:10px; right:10px;
+    width:30px; height:30px;
+    border:none; background:transparent;
+    font-size:20px; line-height:1;
+    color:#1b1712; cursor:pointer;
+  }
+  .map-modal-photo{
+    width:100%; aspect-ratio:4/3;
+    background:
+      repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0 10px, transparent 10px 20px),
+      #d9d0b8;
+    border:1px dashed rgba(0,0,0,0.3);
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Special Elite",monospace;
+    font-size:13px;
+    letter-spacing:0.1em;
+    color:#6b6552;
+    margin-bottom:18px;
+  }
+  .map-modal-card h3{
+    font-family:"Shippori Mincho",serif;
+    font-size:19px;
+    margin-bottom:10px;
+  }
+  .map-modal-card p{
+    font-size:14px;
+    line-height:1.9;
+    color:#3a352a;
+  }
+
   /* ---------- X SHARE BUTTON ---------- */
   .x-share{
     position:fixed;
@@ -543,6 +669,26 @@
     </ul>
     <span class="prize">スタンプラリー完走者に<br>オリジナルグッズをプレゼント</span>
   </div>
+
+  <div class="divider"><span>MAP</span></div>
+
+  <div class="mapblock">
+    <p class="eyebrow-mini">STAMP RALLY MAP</p>
+    <h4>捜査ポイントを見つけ出せ</h4>
+    <p class="maphint">地図上のピンをタップすると、各ポイントの詳細が表示される。</p>
+    <div class="map-wrap">
+      <img src="map.png" alt="キャンパス案内図" class="map-img">
+      <button class="map-pin" style="left:70.7%; top:80.3%;" data-name="仮" data-desc="仮" aria-label="ポイント1 詳細を見る">
+        <img src="pin.png" alt="">
+      </button>//学芸
+      <button class="map-pin" style="left:32.5%; top:63.1%;" data-name="仮" data-desc="仮" aria-label="ポイント2 詳細を見る">
+        <img src="pin.png" alt="">
+      </button>//資料館
+      <button class="map-pin" style="left:52.0%; top:40.7%;" data-name="仮" data-desc="仮" aria-label="ポイント3 詳細を見る">
+        <img src="pin.png" alt="">
+      </button>//三号館
+    </div>
+  </div>
 </section>
 
 <footer>
@@ -553,6 +699,15 @@
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 2H22l-7.2 8.3L23.3 22h-6.6l-5.2-6.8L5.4 22H2.2l7.7-8.9L1 2h6.8l4.7 6.2L18.9 2Zm-1.2 18h1.8L7.4 4H5.5l12.2 16Z"/></svg>
   <span>Xでシェア</span>
 </a>
+
+<div class="map-modal" id="mapModal">
+  <div class="map-modal-card">
+    <button class="map-modal-close" id="mapModalClose" aria-label="閉じる">×</button>
+    <div class="map-modal-photo" id="mapModalPhoto">NO IMAGE</div>
+    <h3 id="mapModalName">仮</h3>
+    <p id="mapModalDesc">仮</p>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -660,6 +815,46 @@
       + "&url=" + encodeURIComponent(pageUrl);
 
     btn.href = intentUrl;
+  })();
+
+  // Stamp rally map pins
+  (function(){
+    const modal = document.getElementById('mapModal');
+    const closeBtn = document.getElementById('mapModalClose');
+    const nameEl = document.getElementById('mapModalName');
+    const descEl = document.getElementById('mapModalDesc');
+    const photoEl = document.getElementById('mapModalPhoto');
+    const pins = document.querySelectorAll('.map-pin');
+
+    function openModal(pin){
+      nameEl.textContent = pin.dataset.name || '';
+      descEl.textContent = pin.dataset.desc || '';
+      const photo = pin.dataset.photo;
+      if(photo){
+        photoEl.style.backgroundImage = "url('" + photo + "')";
+        photoEl.style.backgroundSize = 'cover';
+        photoEl.style.backgroundPosition = 'center';
+        photoEl.textContent = '';
+      } else {
+        photoEl.style.backgroundImage = '';
+        photoEl.textContent = 'NO IMAGE';
+      }
+      modal.classList.add('show');
+    }
+    function closeModal(){
+      modal.classList.remove('show');
+    }
+
+    pins.forEach(pin=>{
+      pin.addEventListener('click', ()=> openModal(pin));
+    });
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{
+      if(e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') closeModal();
+    });
   })();
 })();
 </script>
