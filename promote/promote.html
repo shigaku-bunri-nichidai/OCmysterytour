@@ -22,6 +22,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>史学科×謎解き｜secret tour</title>
+<link rel="icon" href="favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Special+Elite&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -722,7 +723,7 @@
   </div>
 </section>
   <div class="hp-link">
-  <a href="https://dept.chs.nihon-u.ac.jp/history/" target="_blank" rel="noopener noreferrer">史学科HP</a>
+  <a id="hpLinkBtn" href="https://dept.chs.nihon-u.ac.jp/history/" target="_blank" rel="noopener noreferrer">史学科HP</a>
 </div>
 
 <footer>
@@ -852,7 +853,25 @@
       + "?text=" + encodeURIComponent(text)
       + "&url=" + encodeURIComponent(pageUrl);
 
-    btn.href = intentUrl;
+   btn.href = intentUrl;
+
+    btn.addEventListener('click', ()=>{
+      if(typeof gtag === 'function'){
+        gtag('event', 'x_share_click');
+      }
+    });
+  })();
+  // 史学科HPボタン計測
+  (function(){
+    const hpBtn = document.getElementById('hpLinkBtn');
+    if(hpBtn){
+      hpBtn.addEventListener('click', ()=>{
+        if(typeof gtag === 'function'){
+          gtag('event', 'hp_link_click');
+        }
+      });
+    }
+  })();
   })();
 
   // Stamp rally map pins
@@ -874,8 +893,13 @@
       modal.classList.remove('show');
     }
 
-    pins.forEach(pin=>{
-      pin.addEventListener('click', ()=> openModal(pin));
+   pins.forEach(pin=>{
+      pin.addEventListener('click', ()=>{
+        openModal(pin);
+        if(typeof gtag === 'function'){
+          gtag('event', 'pin_click', { pin_name: pin.dataset.name });
+        }
+      });
     });
     closeBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e)=>{
