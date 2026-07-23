@@ -515,19 +515,12 @@
     font-size:20px; line-height:1;
     color:#1b1712; cursor:pointer;
   }
-  .map-modal-photo{
+.map-modal-photo{
     width:100%; aspect-ratio:4/3;
-    background:
-      repeating-linear-gradient(45deg, rgba(0,0,0,0.06) 0 10px, transparent 10px 20px),
-      #d9d0b8;
-    border:1px dashed rgba(0,0,0,0.3);
-    display:flex; align-items:center; justify-content:center;
-    font-family:"Special Elite",monospace;
-    font-size:13px;
-    letter-spacing:0.1em;
-    color:#6b6552;
+    background-size:cover;
+    background-position:center;
     margin-bottom:18px;
-  }
+}
   .map-modal-card h3{
     font-family:"Shippori Mincho",serif;
     font-size:19px;
@@ -675,19 +668,33 @@
     <h4>スタンプラリー捜査ポイント</h4>
     <p class="maphint">地図上のピンをタップで、各ポイントの詳細が表示</p>
     <div class="map-wrap">
-      <img src="map.png" alt="キャンパス案内図" class="map-img">
-      <button class="map-pin" style="left:70.7%; top:80.3%;" data-name="学芸員課程研究室" data-desc="学芸員になるための勉強を行う場所
-オープンキャンパスでは、掛け軸等の学芸員のお仕事体験を実施中" aria-label="ポイント1 詳細を見る">
-        <img src="pin.png" alt="">
-      </button>//gakugei
-      <button class="map-pin" style="left:32.5%; top:63.1%;" data-name="資料館" data-desc="文理学部がもっている資料を文理学部の先生達が企画し、展示している場所
-オープンキャンパスでも謎解きツアーや展示を開催中" aria-label="ポイント2 詳細を見る">
-        <img src="pin.png" alt="">
-      </button>//museum
-      <button class="map-pin" style="left:52.0%; top:40.7%;" data-name="史学科展示コーナー" data-desc="スタンプラリーのノベルティ受付場所。
-謎解きや本物の史料展示中。学生や先生達と直接話せるよ" aria-label="ポイント3 詳細を見る">
-        <img src="pin.png" alt="">
-      </button>//gakka
+      <img src="map.webp" alt="キャンパス案内図" class="map-img">
+     <button class="map-pin" style="left:70.7%; top:80.3%;" 
+  data-name="学芸員課程研究室" 
+  data-desc="学芸員になるための勉強を行う場所
+オープンキャンパスでは、掛け軸等の学芸員のお仕事体験を実施中" 
+  data-photo="gakugei.webp"
+  aria-label="ポイント1 詳細を見る">
+  <img src="pin.png" alt="">
+</button>
+
+<button class="map-pin" style="left:32.5%; top:63.1%;" 
+  data-name="資料館" 
+  data-desc="文理学部がもっている資料を文理学部の先生達が企画し、展示している場所
+オープンキャンパスでも謎解きツアーや展示を開催中" 
+  data-photo="museum.webp"
+  aria-label="ポイント2 詳細を見る">
+  <img src="pin.png" alt="">
+</button>
+
+<button class="map-pin" style="left:52.0%; top:40.7%;" 
+  data-name="史学科展示コーナー" 
+  data-desc="スタンプラリーのノベルティ受付場所。
+謎解きや本物の史料展示中。学生や先生達と直接話せるよ" 
+  data-photo="shigakuka.webp"
+  aria-label="ポイント3 詳細を見る">
+  <img src="pin.png" alt="">
+</button>
     </div>
   </div>
 </section>
@@ -704,7 +711,7 @@
 <div class="map-modal" id="mapModal">
   <div class="map-modal-card">
     <button class="map-modal-close" id="mapModalClose" aria-label="閉じる">×</button>
-    <div class="map-modal-photo" id="mapModalPhoto">NO IMAGE</div>
+<div class="map-modal-photo" id="mapModalPhoto"></div>
     <h3 id="mapModalName">仮</h3>
     <p id="mapModalDesc">仮</p>
   </div>
@@ -830,16 +837,7 @@
     function openModal(pin){
       nameEl.textContent = pin.dataset.name || '';
       descEl.textContent = pin.dataset.desc || '';
-      const photo = pin.dataset.photo;
-      if(photo){
-        photoEl.style.backgroundImage = "url('" + photo + "')";
-        photoEl.style.backgroundSize = 'cover';
-        photoEl.style.backgroundPosition = 'center';
-        photoEl.textContent = '';
-      } else {
-        photoEl.style.backgroundImage = '';
-        photoEl.textContent = 'NO IMAGE';
-      }
+      photoEl.style.backgroundImage = "url('" + pin.dataset.photo + "')";
       modal.classList.add('show');
     }
     function closeModal(){
