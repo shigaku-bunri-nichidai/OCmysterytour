@@ -559,7 +559,34 @@
     box-shadow:0 16px 30px -10px rgba(227,194,60,0.4);
   }
   .x-share svg{ width:16px; height:16px; fill:var(--parchment); flex:none; }
-
+.hp-link{
+    display:flex;
+    justify-content:center;
+    padding:36px 6vw 44px;
+    background:var(--void-2);
+  }
+.hp-link a{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:var(--blood);
+    color:var(--parchment);
+    font-family:"Noto Sans JP",sans-serif;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-decoration:none;
+    padding:16px 36px;
+    border-radius:6px;
+    box-shadow:0 14px 30px -14px rgba(0,0,0,0.7);
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .hp-link a:hover,
+  .hp-link a:active{
+    background:var(--blood-bright);
+    transform:translateY(-2px);
+    box-shadow:0 18px 34px -14px rgba(0,0,0,0.75);
+  }
   footer{
     padding:40px 6vw 60px;
     color:var(--ash);
@@ -699,6 +726,9 @@
     </div>
   </div>
 </section>
+  <div class="hp-link">
+  <a href="https://dept.chs.nihon-u.ac.jp/history/" target="_blank" rel="noopener noreferrer">史学科HP</a>
+</div>
 
 <footer>
   史学科 × 謎解き — 史学科事務室監修
