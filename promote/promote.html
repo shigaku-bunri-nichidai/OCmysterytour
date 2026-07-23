@@ -339,7 +339,7 @@
   .times .t::before{ left:-4px; }
   .times .t::after{ right:-4px; }
 
-  /* tape divider */
+  /* tape divider　border */
   .divider{
     height:22px; margin:70px 0 46px;
     max-width:980px;
@@ -499,7 +499,7 @@
     box-shadow:0 30px 60px -20px rgba(0,0,0,0.8);
   }
   .map-modal-card::before{
-    content:"EVIDENCE";
+    content:"CHECK POINT";
     position:absolute; top:-14px; left:26px;
     background:var(--blood);
     color:var(--parchment);
@@ -533,12 +533,12 @@
     font-size:19px;
     margin-bottom:10px;
   }
-  .map-modal-card p{
+.map-modal-card p{
     font-size:14px;
-    line-height:1.9;
+    line-height:1.7; /* 1.9→1.7に少し詰める */
     color:#3a352a;
-  }
-
+    white-space: pre-line;
+}
   /* ---------- X SHARE BUTTON ---------- */
   .x-share{
     position:fixed;
@@ -670,23 +670,24 @@
     <span class="prize">スタンプラリー完走者に<br>オリジナルグッズをプレゼント</span>
   </div>
 
-  <div class="divider"><span>MAP</span></div>
-
   <div class="mapblock">
     <p class="eyebrow-mini">STAMP RALLY MAP</p>
-    <h4>捜査ポイントを見つけ出せ</h4>
-    <p class="maphint">地図上のピンをタップすると、各ポイントの詳細が表示される。</p>
+    <h4>スタンプラリー捜査ポイント</h4>
+    <p class="maphint">地図上のピンをタップで、各ポイントの詳細が表示</p>
     <div class="map-wrap">
       <img src="map.png" alt="キャンパス案内図" class="map-img">
-      <button class="map-pin" style="left:70.7%; top:80.3%;" data-name="仮" data-desc="仮" aria-label="ポイント1 詳細を見る">
+      <button class="map-pin" style="left:70.7%; top:80.3%;" data-name="学芸員課程研究室" data-desc="学芸員になるための勉強を行う場所
+オープンキャンパスでは、掛け軸等の学芸員のお仕事体験を実施中" aria-label="ポイント1 詳細を見る">
         <img src="pin.png" alt="">
-      </button>//学芸
-      <button class="map-pin" style="left:32.5%; top:63.1%;" data-name="仮" data-desc="仮" aria-label="ポイント2 詳細を見る">
+      </button>//gakugei
+      <button class="map-pin" style="left:32.5%; top:63.1%;" data-name="資料館" data-desc="文理学部がもっている資料を文理学部の先生達が企画し、展示している場所
+オープンキャンパスでも謎解きツアーや展示を開催中" aria-label="ポイント2 詳細を見る">
         <img src="pin.png" alt="">
-      </button>//資料館
-      <button class="map-pin" style="left:52.0%; top:40.7%;" data-name="仮" data-desc="仮" aria-label="ポイント3 詳細を見る">
+      </button>//museum
+      <button class="map-pin" style="left:52.0%; top:40.7%;" data-name="史学科展示コーナー" data-desc="スタンプラリーのノベルティ受付場所。
+謎解きや本物の史料展示中。学生や先生達と直接話せるよ" aria-label="ポイント3 詳細を見る">
         <img src="pin.png" alt="">
-      </button>//三号館
+      </button>//gakka
     </div>
   </div>
 </section>
