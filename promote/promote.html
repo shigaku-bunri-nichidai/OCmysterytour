@@ -853,7 +853,7 @@
       + "?text=" + encodeURIComponent(text)
       + "&url=" + encodeURIComponent(pageUrl);
 
-   btn.href = intentUrl;
+    btn.href = intentUrl;
 
     btn.addEventListener('click', ()=>{
       if(typeof gtag === 'function'){
@@ -861,6 +861,7 @@
       }
     });
   })();
+
   // 史学科HPボタン計測
   (function(){
     const hpBtn = document.getElementById('hpLinkBtn');
@@ -871,7 +872,6 @@
         }
       });
     }
-  })();
   })();
 
   // Stamp rally map pins
@@ -893,7 +893,7 @@
       modal.classList.remove('show');
     }
 
-   pins.forEach(pin=>{
+    pins.forEach(pin=>{
       pin.addEventListener('click', ()=>{
         openModal(pin);
         if(typeof gtag === 'function'){
