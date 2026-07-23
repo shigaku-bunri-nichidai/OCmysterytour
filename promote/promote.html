@@ -128,12 +128,12 @@
   #f1.dying{ animation: flicker1 0.3s steps(1) forwards; }
   #f1.gone{ opacity:0; transition:opacity .05s; }
 
-  @keyframes staticBurst{
+@keyframes staticBurst{
     0%{opacity:0;}
-    10%{opacity:0.95;}
-    85%{opacity:0.95;}
+    10%{opacity:1;}
+    85%{opacity:1;}
     100%{opacity:0;}
-  }
+}
   #staticCanvas.burst{ animation: staticBurst 1.4s steps(6) forwards; }
 
   @keyframes blackoutSeq{
@@ -750,6 +750,10 @@
 
 <script>
 (function(){
+  if('scrollRestoration' in history){
+    history.scrollRestoration = 'manual';
+  }
+  window.scrollTo(0, 0);
   const f1 = document.getElementById('f1');
   const f2 = document.getElementById('f2');
   const f3 = document.getElementById('f3-wrap');
